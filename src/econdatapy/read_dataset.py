@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 import pandas
+from pytz import timezone
 import requests
 import settings
 import warnings
@@ -66,16 +67,51 @@ def process_dataset(env, session, x, params):
         data_set_ref = "-".join([x[1]["agencyid"],
                                  x[1]["id"],
                                  x[1]["version"]])
-        query_params = {"release": get_release()}
+        query_params = {}
+        release = get_release(env, session, params, data_set_ref)
+        if release:
+            query_params["release"] = release
         if "series-key" in params:
             query_params["series-key"] = params["series-key"]
         tmp_data_set = get_data(env, session, data_set_ref, query_params)
-    data_set = [process_series(x) for x in tmp_data_set["series"]]
-    series_keys = [x["series-key"] for x in tmp_data_set["series"]]
-    return dict(zip(series_keys, data_set))
+    series = [process_series(x) for x in tmp_data_set.pop("series")]
+    series_keys = [x.metadata["series-key"] for x in series]
+    data_set = {"metadata": tmp_data_set,
+                "data": dict(zip(series_keys, series))}
+    return data_set
 
-def get_release():
-    return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+def get_release(env, session, params, ref):
+    release = None
+    if "release" not in params:
+        release = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+    else:
+        candidate_release = params["release"]
+        try:
+            release = datetime.datetime.strptime(candidate_release,
+                                                 "%Y-%m-%dT%H:%M:%S")
+        except:
+            if candidate_release == "unreleased":
+                release = None
+            elif candidate_release == "latest":
+                release = datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+            else:
+                response = session.get(env.url + "/" + env.path + \
+                                       "/datasets/" + ref + "/release",
+                                       params = params)
+                if not response.ok:
+                    raise Exception(response.json())
+                data_message = response.json()
+                if not len(data_message["releases"]) == 0:
+                    index = [(lambda y: y["description"] == candidate_release)(x)
+                             for x in data_message["releases"]].index(True)
+                    x = data_message["releases"][index]["release"]
+                    y = datetime.datetime.strptime(x, "%Y-%m-%dT%H:%M:%S%z")
+                    z = y.astimezone(timezone("Africa/Johannesburg"))
+                    release = z.strftime("%Y-%m-%dT%H:%M:%S")
+                else:
+                  Exception("Data set has no historical releases, ",
+                            "try: release = \"unreleased\"")
+    return release
 
 def get_data(env, session, ref, params, **kwargs):
     if "links" not in kwargs:
