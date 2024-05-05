@@ -71,7 +71,8 @@ def process_dataset(env, session, x, params):
             query_params["series-key"] = params["series-key"]
         tmp_data_set = get_data(env, session, data_set_ref, query_params)
     data_set = [process_series(x) for x in tmp_data_set["series"]]
-    return data_set
+    series_keys = [x["series-key"] for x in tmp_data_set["series"]]
+    return dict(zip(series_keys, data_set))
 
 def get_release():
     return datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
