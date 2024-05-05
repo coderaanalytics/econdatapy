@@ -1,10 +1,10 @@
-Requires the `requests` and `pandas` packages, install and then run with `ECONDATA_CREDENTIALS="username;password" python`
+Install `pip install -i https://test.pypi.org/simple/ econdatapy` and then run with `ECONDATA_CREDENTIALS="username;password" python`
 
 
 ```
->>> from read_dataset import read_dataset
+>>> from econdatapy import read
 
->>> x = read_dataset("MINING")
+>>> x = read.dataset("MINING")
 Fetching dataset(s) - MINING
 
 Processing data set: ECONDATA-MINING-1.1.0

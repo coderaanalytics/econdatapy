@@ -1,1 +1,2 @@
-src/econdatapy/__pycache__/*
+src/econdatapy/__pycache__/
+dist/

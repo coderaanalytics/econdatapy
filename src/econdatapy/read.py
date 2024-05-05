@@ -4,10 +4,10 @@ import os
 import pandas
 from pytz import timezone
 import requests
-import settings
+from econdatapy import settings
 import warnings
 
-def read_dataset(id, **params):
+def dataset(id, **params):
 
 
     # Parameters ----
