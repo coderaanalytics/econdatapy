@@ -71,8 +71,8 @@ def process_dataset(env, session, x, params):
         release = get_release(env, session, params, data_set_ref)
         if release:
             query_params["release"] = release
-        if "series-key" in params:
-            query_params["series-key"] = params["series-key"]
+        if "series_key" in params:
+            query_params["series-key"] = params["series_key"]
         tmp_data_set = get_data(env, session, data_set_ref, query_params)
     series = [process_series(x) for x in tmp_data_set.pop("series")]
     series_keys = [x.metadata["series-key"] for x in series]
