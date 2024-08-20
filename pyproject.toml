@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "econdatapy"
-version = "0.0.3"
+version = "0.1.0"
 authors = [
   { name="Byron Botha", email="byron@codera.co.za" },
 ]
@@ -13,6 +13,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
   "pandas",
+  "pyjwt",
   "requests"
 ]
 license = {text = "MIT License"}

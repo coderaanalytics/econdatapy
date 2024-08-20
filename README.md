@@ -1,4 +1,6 @@
-Install `pip install -i https://test.pypi.org/simple/ econdatapy` and then run with `ECONDATA_CREDENTIALS="username;password" python`
+Install `pip install -i https://test.pypi.org/simple/ econdatapy` and then run with `python`
+
+Note: if *ECONDATA_CREDENTIALS* environment variable is not set you will be prompted for an API token which can be retrieved from the  *Account* page at [www.econdata.co.za](https://www.econdata.co.za).
 
 
 ```
